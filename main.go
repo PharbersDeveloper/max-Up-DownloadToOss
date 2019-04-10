@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/alfredyang1986/BmMax/BmFactory"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmFactory"
 	"github.com/alfredyang1986/BmServiceDef/BmApiResolver"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
-	"github.com/alfredyang1986/BmMax/BmMaxDefine"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmMaxDefine"
 	"github.com/julienschmidt/httprouter"
 	"github.com/manyminds/api2go"
 	//"os"
@@ -23,7 +23,7 @@ func main() {
 
 	var bmRouter BmConfig.BmRouterConfig
 	bmRouter.GenerateConfig("BM_HOME")
-	//bmRouter.Port = "2019"
+	// bmRouter.Port = "20190"
 	addr := bmRouter.Host + ":" + bmRouter.Port
 	fmt.Println("Listening on ", addr)
 	api := api2go.NewAPIWithResolver(version, &BmApiResolver.RequestURL{Addr: addr})
