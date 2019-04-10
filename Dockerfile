@@ -2,6 +2,7 @@ FROM golang:alpine
 
 RUN apk add --no-cache git mercurial
 
+Run git clone https://github.com/golang/time /go/src/golang.org/x/time
 
 LABEL max-Up-DownloadToOss.version="1.0.1" maintainer="Pharber"
 
