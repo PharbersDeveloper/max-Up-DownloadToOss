@@ -1,0 +1,5 @@
+{
+    "Host":"",
+    "Port":"8081",
+    "TmpDir": "/go/bin/tmp"
+}
