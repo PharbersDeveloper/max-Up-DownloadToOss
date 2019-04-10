@@ -45,13 +45,13 @@ daemons:
 - name: BmMongodbDaemon
   method: NewMongoDBDaemon
   args:
-    host: 192.168.100.174
+    host: primary
     port: 27017
     database: pharbers-max-store
 - name: BmRedisDaemon
   method: NewRedisDBDaemon
   args:
-    host: 192.168.100.174
+    host: redis
     port: 6379
     password:
     database: 0
