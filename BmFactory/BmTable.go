@@ -1,10 +1,10 @@
 package BmFactory
 
 import (
-	"github.com/alfredyang1986/BmMax/BmDataStorage"
-	"github.com/alfredyang1986/BmMax/BmHandler"
-	"github.com/alfredyang1986/BmMax/BmModel"
-	"github.com/alfredyang1986/BmMax/BmResource"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmDataStorage"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmHandler"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmResource"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 )

@@ -8,7 +8,7 @@ import (
 
 	//"github.com/alfredyang1986/BmServiceDef/BmMiddleware"
 	"github.com/alfredyang1986/BmServiceDef/BmDataStorage"
-	"github.com/alfredyang1986/BmMax/BmFactory"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmFactory"
 	"github.com/alfredyang1986/BmServiceDef/BmHandler"
 	//"github.com/alfredyang1986/BmServiceDef/BmPanic"
 	"github.com/alfredyang1986/BmServiceDef/BmResource"

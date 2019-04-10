@@ -2,7 +2,7 @@ package BmHandler
 
 import (
 	"encoding/json"
-	"github.com/alfredyang1986/BmMax/BmModel"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
 	"fmt"
 	"io"
 	"net/http"
