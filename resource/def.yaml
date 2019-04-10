@@ -1,0 +1,57 @@
+storages:
+- name: BmFilesStorage
+  method: NewFilesStorage
+  daemons:
+  - BmMongodbDaemon
+
+resources:
+- name: BmFilesResource
+  method: NewFilesResource
+  storages:
+  - BmFilesStorage
+
+models:
+- Files
+
+services:
+- name: bm-files
+  model: BmFiles
+  resource: BmFilesResource
+
+functions:
+- name: BmUploadToOssHandler
+  create: NewUploadToOssHandler
+  daemons:
+  - BmMongodbDaemon
+  method: UploadToOss
+  http: POST
+  args:
+  - name
+- name: BmAccountHandler
+  create: NewAccountHandler
+  daemons:
+  - BmMongodbDaemon
+  - BmRedisDaemon
+  method: AccountValidation
+  http: POST
+  args:
+  - name
+
+panic:
+  name: BmCommonPanicHandle
+  create: NewCommonPanicHandle
+
+daemons:
+- name: BmMongodbDaemon
+  method: NewMongoDBDaemon
+  args:
+    host: 192.168.100.174
+    port: 27017
+    database: pharbers-max-store
+- name: BmRedisDaemon
+  method: NewRedisDBDaemon
+  args:
+    host: 192.168.100.174
+    port: 6379
+    password:
+    database: 0
