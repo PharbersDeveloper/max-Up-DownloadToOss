@@ -31,6 +31,7 @@ var BLACKMIRROR_DAEMON_FACTORY = map[string]interface{}{
 var BLACKMIRROR_FUNCTION_FACTORY = map[string]interface{}{
 	"BmUploadToOssHandler":     BmHandler.UploadToOssHandler{},
 	"BmAccountHandler":         BmHandler.AccountHandler{},
+	"BmUserAgentHandler":       BmHandler.UserAgentHandler{},
 }
 
 

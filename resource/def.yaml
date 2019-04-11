@@ -36,6 +36,14 @@ functions:
   http: POST
   args:
   - name
+- name: BmUserAgentHandler
+  create: NewUserAgentHandler
+  daemons:
+  - BmMongodbDaemon
+  method: GenerateUserAgent
+  http: GET
+  args:
+  - name
 
 panic:
   name: BmCommonPanicHandle
