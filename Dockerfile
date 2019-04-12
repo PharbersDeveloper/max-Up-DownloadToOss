@@ -4,7 +4,7 @@ RUN apk add --no-cache git mercurial
 
 Run git clone https://github.com/golang/time /go/src/golang.org/x/time
 
-LABEL max-Up-DownloadToOss.version="1.0.13" maintainer="Pharber"
+LABEL max-Up-DownloadToOss.version="1.0.14" maintainer="Pharber"
 
 ENV BM_HOME /go/bin
 

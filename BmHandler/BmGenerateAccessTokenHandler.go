@@ -61,7 +61,6 @@ func (h BmGenerateAccessTokenHandler) GenerateAccessToken(w http.ResponseWriter,
 	//version := strings.Split(r.URL.Path, "/")[1]
 	resource := fmt.Sprint("192.168.100.116:9096/v0/GenerateAccessToken?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
-	fmt.Println(mergeURL)
 	// 转发
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", mergeURL, nil)
