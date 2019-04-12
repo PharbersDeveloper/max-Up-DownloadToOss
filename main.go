@@ -29,7 +29,7 @@ func main() {
 	api := api2go.NewAPIWithResolver(version, &BmApiResolver.RequestURL{Addr: addr})
 	pod.RegisterAllResource(api)
 	pod.RegisterAllFunctions(version, api)
-
+	pod.RegisterAllMiddleware(api)
 	handler := api.Handler().(*httprouter.Router)
 	//pod.RegisterPanicHandler(handler)
 	http.ListenAndServe(":"+bmRouter.Port, handler)

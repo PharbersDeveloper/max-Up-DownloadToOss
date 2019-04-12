@@ -14,13 +14,14 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
-type UserAgentHandler struct {
+type BmGenerateAccessTokenHandler struct {
 	Method     string
 	HttpMethod string
 	Args       []string
 	db         *BmMongodb.BmMongodb
 }
-func (h UserAgentHandler) NewUserAgentHandler(args ...interface{}) UserAgentHandler {
+
+func (h BmGenerateAccessTokenHandler) NewBmGenerateAccessTokenHandler(args ...interface{}) BmGenerateAccessTokenHandler {
 	var m *BmMongodb.BmMongodb
 	var hm string
 	var md string
@@ -47,20 +48,20 @@ func (h UserAgentHandler) NewUserAgentHandler(args ...interface{}) UserAgentHand
 		} else {
 		}
 	}
-	return UserAgentHandler{Method: md, HttpMethod: hm, Args: ag, db: m}
+	return BmGenerateAccessTokenHandler{Method: md, HttpMethod: hm, Args: ag, db: m}
 }
 
-func (h UserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+func (h BmGenerateAccessTokenHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 
+	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
 	//version := strings.Split(r.URL.Path, "/")[1]
-
-	resource := fmt.Sprint("192.168.100.116:9096/v0/ThirdParty?", r.URL.RawQuery)
+	resource := fmt.Sprint("192.168.100.116:9096/v0/GenerateAccessToken?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
-
+	fmt.Println(mergeURL)
 	// 转发
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", mergeURL, nil)
@@ -72,17 +73,21 @@ func (h UserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Reque
 		fmt.Println("Fuck Error")
 	}
 	result, err := ioutil.ReadAll(response.Body)
-	data := map[string]string {}
-	json.Unmarshal(result, &data)
-	http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
+	data := map[string]interface{}{}
+	err = json.Unmarshal(result, &data)
+	if err != nil {
+		fmt.Println("AccessToken Error")
+	}
 
+	enc := json.NewEncoder(w)
+	enc.Encode(data)
 	return 0
 }
 
-func (h UserAgentHandler) GetHttpMethod() string {
+func (h BmGenerateAccessTokenHandler) GetHttpMethod() string {
 	return h.HttpMethod
 }
 
-func (h UserAgentHandler) GetHandlerMethod() string {
+func (h BmGenerateAccessTokenHandler) GetHandlerMethod() string {
 	return h.Method
 }

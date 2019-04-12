@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	//"github.com/alfredyang1986/BmServiceDef/BmMiddleware"
+	"github.com/alfredyang1986/BmServiceDef/BmMiddleware"
 	"github.com/alfredyang1986/BmServiceDef/BmDataStorage"
 	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmFactory"
 	"github.com/alfredyang1986/BmServiceDef/BmHandler"
@@ -31,7 +31,7 @@ type Pod struct {
 	Resources    map[string]BmResource.BmRes
 	Daemons      map[string]BmDaemons.BmDaemon
 	Handler      map[string]BmHandler.BmHandler
-	//Middleware   map[string]BmMiddleware.BmMiddleware
+	Middleware   map[string]BmMiddleware.BmMiddleware
 	PanicHandler BmHandler.BmPanicHandler
 }
 
@@ -54,7 +54,7 @@ func (p *Pod) RegisterSerFromYAML(path string) {
 	p.CreateStorageInstances()
 	p.CreateResourceInstances()
 	p.CreateFunctionInstances()
-	//p.CreateMiddleInstances()
+	p.CreateMiddleInstances()
 	//p.CreatePanicHandleInstances()
 }
 
@@ -134,7 +134,7 @@ func (p *Pod) CreateFunctionInstances() {
 		p.Handler[r.Name] = inc.Interface().(BmHandler.BmHandler)
 	}
 }
-/*
+
 func (p *Pod) CreateMiddleInstances() {
 	if p.Middleware == nil {
 		p.Middleware = make(map[string]BmMiddleware.BmMiddleware)
@@ -149,12 +149,12 @@ func (p *Pod) CreateMiddleInstances() {
 			args = append(args, tmp)
 		}
 
-		inc, _ := BmSingleton.GetFactoryInstance().ReflectFunctionCall(any, constuctor, args)
+		inc, _ := BmSingleton.GetFactoryInstance().ReflectFunctionCall(any, constuctor, args, r.Args)
 		v := inc.Interface()
 		p.Middleware[r.Name] = v.(BmMiddleware.BmMiddleware)
 	}
 }
-
+/*
 func (p *Pod) CreatePanicHandleInstances() {
 	if p.PanicHandler == nil {
 		p.PanicHandler = *new(BmHandler.BmPanicHandler)
@@ -200,13 +200,13 @@ func (p Pod) RegisterAllFunctions(prefix string, api *api2go.API) {
 	}
 
 }
-/*
+
 func (p Pod) RegisterAllMiddleware(api *api2go.API) {
 	for _, mw := range p.Middleware {
 		api.UseMiddleware(mw.DoMiddleware)
 	}
 }
-
+/*
 func (p Pod) RegisterPanicHandler(router *httprouter.Router) {
 	router.PanicHandler = p.PanicHandler.HandlePanic
 }

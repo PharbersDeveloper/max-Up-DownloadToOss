@@ -44,6 +44,30 @@ functions:
   http: GET
   args:
   - name
+- name: BmGenerateAccessTokenHandler
+  create: NewBmGenerateAccessTokenHandler
+  daemons:
+  - BmMongodbDaemon
+  method: GenerateAccessToken
+  http: GET
+  args:
+  - name
+- name: BmRefreshAccessTokenHandler
+  create: NewRefreshAccessTokenHandler
+  daemons:
+  - BmMongodbDaemon
+  method: RefreshAccessToken
+  http: GET
+  args:
+  - name
+
+middlewares:
+- name: BmCheckTokenMiddleware
+  create: NewCheckTokenMiddleware
+  daemons:
+  - BmRedisDaemon
+  args:
+  - 192.168.100.116:9096
 
 panic:
   name: BmCommonPanicHandle
@@ -53,13 +77,13 @@ daemons:
 - name: BmMongodbDaemon
   method: NewMongoDBDaemon
   args:
-    host: primary
+    host: 192.168.100.174
     port: 27017
     database: pharbers-max-store
 - name: BmRedisDaemon
   method: NewRedisDBDaemon
   args:
-    host: redis
+    host: 192.168.100.174
     port: 6379
     password:
     database: 0

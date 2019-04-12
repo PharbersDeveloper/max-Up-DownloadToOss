@@ -14,13 +14,15 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
-type UserAgentHandler struct {
+type RefreshAccessTokenHandler struct {
 	Method     string
 	HttpMethod string
 	Args       []string
 	db         *BmMongodb.BmMongodb
 }
-func (h UserAgentHandler) NewUserAgentHandler(args ...interface{}) UserAgentHandler {
+
+
+func (h RefreshAccessTokenHandler) NewRefreshAccessTokenHandler(args ...interface{}) RefreshAccessTokenHandler {
 	var m *BmMongodb.BmMongodb
 	var hm string
 	var md string
@@ -47,18 +49,17 @@ func (h UserAgentHandler) NewUserAgentHandler(args ...interface{}) UserAgentHand
 		} else {
 		}
 	}
-	return UserAgentHandler{Method: md, HttpMethod: hm, Args: ag, db: m}
+	return RefreshAccessTokenHandler{Method: md, HttpMethod: hm, Args: ag, db: m}
 }
 
-func (h UserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-
+func (h RefreshAccessTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	//version := strings.Split(r.URL.Path, "/")[1]
-
-	resource := fmt.Sprint("192.168.100.116:9096/v0/ThirdParty?", r.URL.RawQuery)
+	version := "v0"
+	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "RefreshAccessToken", "?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
@@ -72,17 +73,21 @@ func (h UserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Reque
 		fmt.Println("Fuck Error")
 	}
 	result, err := ioutil.ReadAll(response.Body)
-	data := map[string]string {}
-	json.Unmarshal(result, &data)
-	http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
+	data := map[string]interface{}{}
+	err = json.Unmarshal(result, &data)
+	if err != nil {
+		fmt.Println("RefreshAccessToken Error")
+	}
 
+	enc := json.NewEncoder(w)
+	enc.Encode(data)
 	return 0
 }
 
-func (h UserAgentHandler) GetHttpMethod() string {
+func (h RefreshAccessTokenHandler) GetHttpMethod() string {
 	return h.HttpMethod
 }
 
-func (h UserAgentHandler) GetHandlerMethod() string {
+func (h RefreshAccessTokenHandler) GetHandlerMethod() string {
 	return h.Method
 }
