@@ -10,7 +10,7 @@ import (
 	"time"
 	"reflect"
 	"strings"
-
+	"strconv"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
@@ -80,6 +80,12 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		bmRouter.GenerateConfig("BM_HOME")
 
 		fn, err := uuid.GenerateUUID()
+		if err != nil {
+			fmt.Println(err)
+			errMsg := "upload file key error, please use key 'file'."
+			panic(errMsg)
+			return 0
+		}
 		lsttmp := strings.Split(handler.Filename, ".")
 		exname := lsttmp[len(lsttmp)-1]
 
@@ -92,10 +98,9 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 			panic(errMsg)
 			return 0
 		}
-		 
+		
 		defer os.Remove("./"+localDir)
 		io.Copy(f, file)
-
 		result := map[string]string{
 			//"file": handler.Filename,
 			"file": fn,
@@ -123,11 +128,12 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 			fmt.Println("Error:", err)
 			os.Exit(-1)
 		}
+		Size,_:=f.Seek(0, os.SEEK_END)
+		sizestr:=strconv.FormatInt(Size/1024,10)+"MB"
 
 		t := time.Now()
-		tmp := t.Format("2006-01-02 15:04:05")
-		//tm := t.UTC()
-		//tmp := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d", tm.Year(), tm.Month(), tm.Day(), tm.Hour(), tm.Minute(), tm.Second())
+		tmp := t.Format("2006-01")
+		
 		filename:=lsttmp[0]
 		bmfile := BmModel.Files{
 			Name : filename,
@@ -135,6 +141,8 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 			Describe : desc,
 			Accept : accept[0],
 			Uuid  : fn ,
+			Size :  sizestr,
+			Type : exname,
 		}
 		h.db.InsertBmObject(&bmfile)
 		response := map[string]interface{}{

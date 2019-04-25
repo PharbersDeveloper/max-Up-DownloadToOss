@@ -14,6 +14,9 @@ type Files struct {
 	Describe  string    `json:"describe" bson:"describe"`
 	Accept  string    	`json:"accept" bson:"accept"`
 	Uuid  string    	`json:"uuid" bson:"uuid"`
+	Type  string 		`json:"type" bson:"type"`
+	Size  string		`json:"size" bson:"size"`
+	Downcount  int32    `json:"downcount" bson:"downcount"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
