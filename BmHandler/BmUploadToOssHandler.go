@@ -112,7 +112,7 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		if len(des)>0{
 			desc = des[0]
 		}
-		client, err := oss.New("oss-cn-beijing.aliyuncs.com", "LTAIEoXgk4DOHDGi", "x75sK6191dPGiu9wBMtKE6YcBBh8EI")
+		client, err := oss.New(h.Args[1], h.Args[2], h.Args[3])
 		if err != nil {
 			// HandleError(err)
 			panic("密钥出错")

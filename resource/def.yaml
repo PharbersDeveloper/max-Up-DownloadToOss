@@ -27,6 +27,9 @@ functions:
   http: POST
   args:
   - name
+  - oss-cn-beijing.aliyuncs.com
+  - LTAIEoXgk4DOHDGi
+  - x75sK6191dPGiu9wBMtKE6YcBBh8EI
 - name: BmAccountHandler
   create: NewAccountHandler
   daemons:
@@ -77,7 +80,7 @@ daemons:
 - name: BmMongodbDaemon
   method: NewMongoDBDaemon
   args:
-    host: 192.168.100.174
+    host: primary
     port: 27017
     database: pharbers-max-store
 - name: BmRedisDaemon
