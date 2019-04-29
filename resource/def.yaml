@@ -65,12 +65,13 @@ functions:
 #   - name
 
 middlewares:
-# - name: BmCheckTokenMiddleware
-#   create: NewCheckTokenMiddleware
-#   daemons:
-#   - BmRedisDaemon
-#   args:
-#   - 192.168.100.116:9096
+- name: BmCheckTokenMiddleware
+  create: NewCheckTokenMiddleware
+  daemons:
+  - BmRedisDaemon
+  args:
+  - oauth.pharbers.com
+#  - 192.168.100.174:9096
 
 panic:
   name: BmCommonPanicHandle
@@ -86,7 +87,7 @@ daemons:
 - name: BmRedisDaemon
   method: NewRedisDBDaemon
   args:
-    host: 192.168.100.174
+    host: redis
     port: 6379
     password:
     database: 0
