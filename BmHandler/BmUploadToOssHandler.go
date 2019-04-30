@@ -100,7 +100,7 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 			return 0
 		}
 		
-		defer os.Remove("./"+localDir)
+		defer os.Remove(localDir)
 		io.Copy(f, file)
 		result := map[string]string{
 			//"file": handler.Filename,
