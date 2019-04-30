@@ -4,18 +4,14 @@ RUN apk add --no-cache git mercurial
 
 Run git clone https://github.com/golang/time /go/src/golang.org/x/time
 
-LABEL max-Up-DownloadToOss.version="1.0.15" maintainer="Pharber"
+LABEL  maintainer="czhang@pharbers.com" max-Up-DownloadToOss.version="1.0.16"
 
-ENV BM_HOME /go/bin
+ENV PH_FUAD_HOME $GOPATH/src/github.com/PharbersDeveloper/max-Up-DownloadToOss
 
 RUN go get github.com/alfredyang1986/blackmirror && \
 go get github.com/alfredyang1986/BmServiceDef && \
-go get github.com/PharbersDeveloper/max-Up-DownloadToOss
-
-RUN go install -v github.com/PharbersDeveloper/max-Up-DownloadToOss
-
-ADD resource /go/bin/resource
-ADD tmp /go/bin/tmp
+go get github.com/PharbersDeveloper/max-Up-DownloadToOss && \
+go install -v github.com/PharbersDeveloper/max-Up-DownloadToOss
 
 WORKDIR /go/bin
 

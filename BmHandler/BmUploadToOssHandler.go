@@ -88,8 +88,9 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		}
 		lsttmp := strings.Split(handler.Filename, ".")
 		exname := lsttmp[len(lsttmp)-1]
-
-		localDir := "tmp/"+fn + "." + exname // handler.Filename
+		const envHome = "PH_FUAD_HOME"
+		phHome := os.Getenv(envHome)
+		localDir := phHome + "/tmp/"+fn + "." + exname // handler.Filename
 		f, err := os.OpenFile(localDir, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			fmt.Println("OpenFile error")
