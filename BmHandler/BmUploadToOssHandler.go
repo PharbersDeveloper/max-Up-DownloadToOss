@@ -2,22 +2,23 @@ package BmHandler
 
 import (
 	"encoding/json"
-	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"time"
-	"reflect"
-	"strings"
-	"strconv"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmSingleton"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/alfredyang1986/blackmirror/jsonapi/jsonapiobj"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/hashicorp/go-uuid"
 	"github.com/julienschmidt/httprouter"
+	"io"
+	"net/http"
+	"os"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type UploadToOssHandler struct {
@@ -77,7 +78,7 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		defer file.Close()
 
 		var bmRouter BmConfig.BmRouterConfig
-		bmRouter.GenerateConfig("BM_HOME")
+		bmRouter.GenerateConfig(BmSingleton.EnvHome)
 
 		fn, err := uuid.GenerateUUID()
 		if err != nil {
@@ -88,9 +89,9 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		}
 		lsttmp := strings.Split(handler.Filename, ".")
 		exname := lsttmp[len(lsttmp)-1]
-		const envHome = "PH_FUAD_HOME"
-		phHome := os.Getenv(envHome)
-		localDir := phHome + "/tmp/"+fn + "." + exname // handler.Filename
+
+		phHome := os.Getenv(BmSingleton.EnvHome)
+		localDir := phHome + "/" + bmRouter.TmpDir +"/"+fn + "." + exname // handler.Filename
 		f, err := os.OpenFile(localDir, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			fmt.Println("OpenFile error")

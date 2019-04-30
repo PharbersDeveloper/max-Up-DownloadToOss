@@ -1,23 +1,22 @@
 package BmMiddleware
 
 import (
-	"fmt"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmSingleton"
+	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
+	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
+	"github.com/manyminds/api2go"
 	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
-	"encoding/json"
-	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
-	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/manyminds/api2go"
 	"time"
 )
 
 var BmCheckToken BmCheckTokenMiddleware
-
-const projectName string = "FileUpAndDownLoad"
 
 type BmCheckTokenMiddleware struct {
 	Args []string
@@ -125,7 +124,7 @@ func checkAccessScope(userScope string) (accessed bool, accessOpt string) {
 	userAccessOptArr := strings.Split(userAccessOpts, ",")
 	for _, userAccessOpt := range userAccessOptArr {
 		userAccess := strings.Split(userAccessOpt, ":")[0]
-		if userAccess == projectName {
+		if userAccess == BmSingleton.ProjectName {
 			//TODO:目前只是检查有无访问项目的权限，还未进行具体操作权限的check => func checkOperationScope(operationCmd string) (allowed bool) {}
 			accessed = true
 			accessOpt = userAccessOpt
