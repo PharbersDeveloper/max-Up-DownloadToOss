@@ -3,3 +3,5 @@
 .vscode
 BmPods
 debug
+
+tmp/

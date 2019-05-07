@@ -14,6 +14,7 @@ type BmTable struct{}
 
 var BLACKMIRROR_MODEL_FACTORY = map[string]interface{}{
 	"BmFiles":          BmModel.Files{},
+	"BmAccount":          BmModel.Account{},
 }
 
 var BLACKMIRROR_RESOURCE_FACTORY = map[string]interface{}{
@@ -22,6 +23,7 @@ var BLACKMIRROR_RESOURCE_FACTORY = map[string]interface{}{
 
 var BLACKMIRROR_STORAGE_FACTORY = map[string]interface{}{
 	"BmFilesStorage":            BmDataStorage.BmFilesStorage{},
+	"BmAccountStorage":            BmDataStorage.BmAccountStorage{},
 }
 
 var BLACKMIRROR_MIDDLEWARE_FACTORY = map[string]interface{}{

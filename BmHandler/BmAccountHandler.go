@@ -1,24 +1,20 @@
 package BmHandler
 
 import (
-	"crypto/md5"
-	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"reflect"
-	"time"
-
+	//"time"
+	//"strings"
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2/bson"
-
+	"github.com/alfredyang1986/blackmirror/jsonapi/jsonapiobj"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
-
+	"encoding/json"
+	"io/ioutil"
 )
 
 type AccountHandler struct {
@@ -66,48 +62,32 @@ func (h AccountHandler) NewAccountHandler(args ...interface{}) AccountHandler {
 
 func (h AccountHandler) AccountValidation(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 	w.Header().Add("Content-Type", "application/json")
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Printf("Error reading body: %v", err)
-		http.Error(w, "can't read body", http.StatusBadRequest)
-		return 1
-	}
+	body, _ := ioutil.ReadAll(r.Body)
+	fmt.Println(string(body))
 	res := BmModel.Account{}
 	json.Unmarshal(body, &res)
-	var out BmModel.Account
-	cond := bson.M{"account": res.Account, "password": res.Password}
-	err = h.db.FindOneByCondition(&res, &out, cond)
 
+	var emailout BmModel.Account
+	var phoneout BmModel.Account
+	emailcond := bson.M{"email": res.Email, "password": res.Password}
+	phonecond := bson.M{"phone": res.Phone, "password": res.Password}
+	emailerr := h.db.FindOneByCondition(&res, &emailout,emailcond)
+	phoneerr := h.db.FindOneByCondition(&res, &phoneout,phonecond)
 	response := map[string]interface{}{
-		"status": "",
-		"result": nil,
-		"error":  nil,
+		"status": "ok",
+		"result": "success",
+		"error":  "",
 	}
-
-	if err == nil && out.ID != "" {
-		hex := md5.New()
-		io.WriteString(hex, out.ID)
-		out.Password = ""
-		token := fmt.Sprintf("%x", hex.Sum(nil))
-		err = h.rd.PushToken(token, time.Hour*24*365)
-		out.Token = token
-
-		response["status"] = "ok"
-		response["result"] = out
-		response["error"] = err
-
-		//reval, _ := json.Marshal(response)
-		enc := json.NewEncoder(w)
-		enc.Encode(response)
-		return 0
-	} else {
+	if (emailerr != nil && emailout.ID == "")&&(phoneerr != nil && phoneout.ID == ""){
+		response["result"] = "用户名或密码错误"
 		response["status"] = "error"
-		response["error"] = "账户或密码错误！"
-		enc := json.NewEncoder(w)
-		enc.Encode(response)
-		return 1
 	}
+	jso := jsonapiobj.JsResult{}
+	jso.Obj = response
+	enc := json.NewEncoder(w)
+	enc.Encode(jso.Obj)
+
+	return 0
 }
 
 func (h AccountHandler) GetHttpMethod() string {

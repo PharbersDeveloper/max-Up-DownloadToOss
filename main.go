@@ -18,7 +18,7 @@ import (
 func main() {
 	fmt.Println("pod archi begins")
 	// 本机测试，添加上
-	//os.Setenv(BmFactory.EnvHome, ".")
+	os.Setenv(BmSingleton.EnvHome, ".")
 
 	phHome := os.Getenv(BmSingleton.EnvHome)
 	fac := BmFactory.BmTable{}

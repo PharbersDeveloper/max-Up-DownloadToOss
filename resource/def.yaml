@@ -3,6 +3,10 @@ storages:
   method: NewFilesStorage
   daemons:
   - BmMongodbDaemon
+- name: BmAccountStorage
+  method: NewAccountStorage
+  daemons:
+  - BmMongodbDaemon
 
 resources:
 - name: BmFilesResource
@@ -12,6 +16,7 @@ resources:
 
 models:
 - Files
+- Account
 
 services:
 - name: bm-files
@@ -81,7 +86,7 @@ daemons:
 - name: BmMongodbDaemon
   method: NewMongoDBDaemon
   args:
-    host: primary
+    host: 192.168.100.174 
     port: 27017
     database: pharbers-max-store
 - name: BmRedisDaemon
