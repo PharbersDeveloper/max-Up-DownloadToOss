@@ -15,6 +15,8 @@ import (
 	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmModel"
 	"encoding/json"
 	"io/ioutil"
+	"github.com/manyminds/api2go"
+	"github.com/PharbersDeveloper/max-Up-DownloadToOss/BmResource"
 )
 
 type AccountHandler struct {
@@ -60,7 +62,7 @@ func (h AccountHandler) NewAccountHandler(args ...interface{}) AccountHandler {
 	return AccountHandler{Method: md, HttpMethod: hm, Args: ag, db: m, rd: r}
 }
 
-func (h AccountHandler) AccountValidation(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+func (h AccountHandler) AccountValidation(w http.ResponseWriter, r *http.Request, _ httprouter.Params) (api2go.Responder) {
 	w.Header().Add("Content-Type", "application/json")
 	body, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(body))
@@ -69,25 +71,28 @@ func (h AccountHandler) AccountValidation(w http.ResponseWriter, r *http.Request
 
 	var emailout BmModel.Account
 	var phoneout BmModel.Account
+	var resAccount BmModel.Account
 	emailcond := bson.M{"email": res.Email, "password": res.Password}
 	phonecond := bson.M{"phone": res.Phone, "password": res.Password}
 	emailerr := h.db.FindOneByCondition(&res, &emailout,emailcond)
 	phoneerr := h.db.FindOneByCondition(&res, &phoneout,phonecond)
-	response := map[string]interface{}{
-		"status": "ok",
-		"result": "success",
-		"error":  "",
-	}
 	if (emailerr != nil && emailout.ID == "")&&(phoneerr != nil && phoneout.ID == ""){
-		response["result"] = "用户名或密码错误"
-		response["status"] = "error"
+		response := map[string]interface{}{
+			"status": "error",
+			"result": "用户名或密码错误",
+			"error":  "",
+		}
+		jso := jsonapiobj.JsResult{}
+		jso.Obj = response
+		enc := json.NewEncoder(w)
+		enc.Encode(jso.Obj)
 	}
-	jso := jsonapiobj.JsResult{}
-	jso.Obj = response
-	enc := json.NewEncoder(w)
-	enc.Encode(jso.Obj)
-
-	return 0
+	if emailerr == nil {
+		resAccount = emailout
+	}else {
+		resAccount = phoneout
+	}
+	return &BmResource.Response{Res: resAccount}
 }
 
 func (h AccountHandler) GetHttpMethod() string {

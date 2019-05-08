@@ -13,6 +13,10 @@ resources:
   method: NewFilesResource
   storages:
   - BmFilesStorage
+- name: BmAccountResource
+  method: NewAccountResource
+  storages:
+  - BmAccountStorage
 
 models:
 - Files
@@ -22,6 +26,9 @@ services:
 - name: bm-files
   model: BmFiles
   resource: BmFilesResource
+- name: bm-account
+  model: BmAccount
+  resource: BmAccountResource
 
 functions:
 - name: BmUploadToOssHandler
@@ -39,11 +46,42 @@ functions:
   create: NewAccountHandler
   daemons:
   - BmMongodbDaemon
-  - BmRedisDaemon
   method: AccountValidation
   http: POST
   args:
   - name
+- name: BmGenerateSmsHandler
+  create: NewGenerateSmsHandler
+  daemons:
+  - BmSmsDaemon
+  - BmRedisDaemon
+  method: GenerateSmsCode
+  http: POST
+  args:
+  - name
+- name: BmVerifiedSmsHandler
+  create: NewVerifiedSmsHandler
+  daemons:
+  - BmSmsDaemon
+  - BmRedisDaemon
+  method: VerifiedSmsCode
+  http: POST
+  args:
+  - name
+- name: BmSendemailHandler
+  create: NewSendemailHandler
+  daemons:
+  - BmMongodbDaemon
+  method: Sendemail
+  http: POST
+  args:
+  - smtpdm.aliyun.com
+  - 465
+  - uploadtooss@uploadtooss.pharbers.com
+  - Black84244216Mirror
+  - 法伯科技
+  - 重置密码通知
+  - text/html; charset=UTF-8
 # - name: BmUserAgentHandler
 #   create: NewUserAgentHandler
 #   daemons:
@@ -70,12 +108,12 @@ functions:
 #   - name
 
 middlewares:
-- name: BmCheckTokenMiddleware
-  create: NewCheckTokenMiddleware
-  daemons:
-  - BmRedisDaemon
-  args:
-  - oauth.pharbers.com
+# - name: BmCheckTokenMiddleware
+#   create: NewCheckTokenMiddleware
+#   daemons:
+#   - BmRedisDaemon
+#   args:
+#   - oauth.pharbers.com
 #  - 192.168.100.174:9096
 
 panic:
@@ -92,7 +130,17 @@ daemons:
 - name: BmRedisDaemon
   method: NewRedisDBDaemon
   args:
-    host: redis
+    host: 192.168.100.174
     port: 6379
     password:
     database: 0
+- name: BmSmsDaemon
+  method: NewSmsDaemon
+  args:
+    regionId: cn-beijing
+    accessKeyId: LTAIEoXgk4DOHDGi
+    accessSecret: x75sK6191dPGiu9wBMtKE6YcBBh8EI
+    domain: dysmsapi.aliyuncs.com
+    version: 2017-05-25
+    signName: 法伯科技
+    templateCode: SMS_117415068
