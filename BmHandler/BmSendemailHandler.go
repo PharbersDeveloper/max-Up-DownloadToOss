@@ -1,14 +1,16 @@
 package BmHandler
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
-	"crypto/tls"  
-	"log"
+	// "crypto/tls"  
+	// "log"
 	"encoding/json"
 	"io/ioutil"
-    "net"
-    "net/smtp"
+    // "net"
+	// "net/smtp"
+	"github.com/alfredyang1986/blackmirror/jsonapi/jsonapiobj"
+	"github.com/go-gomail/gomail"
 	"reflect"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
@@ -55,100 +57,31 @@ type ToEmail struct {
 func (h SendemailHandler) Sendemail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 	rbody, _ := ioutil.ReadAll(r.Body)
 	ToEmail := ToEmail{}
-	response := map[string]interface{}{
-		"status": "",
-		"result": nil,
-		"error":  nil,
-	}
 	json.Unmarshal(rbody, &ToEmail)
 	toEmail := ToEmail.Email
 	
-    header := make(map[string]string)
-    header["From"] = h.Args[4] + "<" + h.Args[2] + ">"
-    header["To"] = toEmail
-    header["Subject"] = h.Args[5]
-    header["Content-Type"] = h.Args[6]
-    body := "www.bing.com"
-    message := ""
-    for k, v := range header {
-        message += fmt.Sprintf("%s: %s\r\n", k, v)
-    }
-    message += "\r\n" + body
-    auth := smtp.PlainAuth(
-        "",
-        h.Args[2],
-        h.Args[3],
-        h.Args[0],
-    )
-    err := h.SendMailUsingTLS(
-		h.Args[0] + ":" + h.Args[1],
-        auth,
-        h.Args[2],
-        []string{toEmail},
-        []byte(message),
-    )
-    if err != nil {
+    m := gomail.NewMessage()
+    m.SetAddressHeader("From", h.Args[2], h.Args[4])  // 发件人
+    m.SetHeader("To", m.FormatAddress(toEmail, ""))   // 收件人
+    m.SetHeader("Subject", h.Args[5])  // 主题
+    m.SetBody("text/html", h.Args[0])  // 正文
+
+    d := gomail.NewPlainDialer(h.Args[3],465,h.Args[2], h.Args[1])  // 发送邮件服务器、端口、发件人账号、发件人密码
+    if err := d.DialAndSend(m); err != nil {
         panic(err)
-    } else {
-        fmt.Println("Send mail success!")
 	}
-	response["status"] = "success"
-	response["error"] = ""
+	response := map[string]interface{}{
+		"status": "ok",
+		"result": "success",
+		"error":  "",
+	}
+	jso := jsonapiobj.JsResult{}
+	jso.Obj = response
 	enc := json.NewEncoder(w)
-	enc.Encode(response)
+	enc.Encode(jso.Obj)
 	return 1
 }
 
-func (h SendemailHandler)Dial(addr string) (*smtp.Client, error) {
-    conn, err := tls.Dial("tcp", addr, nil)
-    if err != nil {
-        log.Println("Dialing Error:", err)
-        return nil, err
-    }
-    //分解主机端口字符串
-    host, _, _ := net.SplitHostPort(addr)
-    return smtp.NewClient(conn, host)
-}
-
-func (h SendemailHandler)SendMailUsingTLS(addr string, auth smtp.Auth, from string,
-    to []string, msg []byte) (err error) {
-    //create smtp client
-    c, err := h.Dial(addr)
-    if err != nil {
-        log.Println("Create smpt client error:", err)
-        return err
-    }
-    defer c.Close()
-    if auth != nil {
-        if ok, _ := c.Extension("AUTH"); ok {
-            if err = c.Auth(auth); err != nil {
-                log.Println("Error during AUTH", err)
-                return err
-            }
-        }
-    }
-    if err = c.Mail(from); err != nil {
-        return err
-    }
-    for _, addr := range to {
-        if err = c.Rcpt(addr); err != nil {
-            return err
-        }
-    }
-    w, err := c.Data()
-    if err != nil {
-        return err
-    }
-    _, err = w.Write(msg)
-    if err != nil {
-        return err
-    }
-    err = w.Close()
-    if err != nil {
-        return err
-    }
-    return c.Quit()
-}
 func (h SendemailHandler) GetHttpMethod() string {
 	return h.HttpMethod
 }

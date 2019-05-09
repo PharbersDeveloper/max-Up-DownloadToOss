@@ -75,10 +75,10 @@ functions:
   method: Sendemail
   http: POST
   args:
-  - smtpdm.aliyun.com
-  - 465
-  - uploadtooss@uploadtooss.pharbers.com
-  - Black84244216Mirror
+  - www.baidu.com
+  - sthtqnfqtsswbdhh
+  - 543187000@qq.com
+  - smtp.qq.com
   - 法伯科技
   - 重置密码通知
   - text/html; charset=UTF-8
