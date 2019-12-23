@@ -126,13 +126,15 @@ daemons:
   args:
     host: 192.168.100.174 
     port: 27017
+    user: pharbers
+    pass: pharbers2019
     database: pharbers-max-store
 - name: BmRedisDaemon
   method: NewRedisDBDaemon
   args:
     host: 192.168.100.174
     port: 6379
-    password:
+    password: pharbers
     database: 0
 - name: BmSmsDaemon
   method: NewSmsDaemon
